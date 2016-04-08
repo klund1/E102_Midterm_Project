@@ -16,7 +16,7 @@ C = [1 0];
 
 %% Determine the feedback gain vector K
 
-
+% Because 
 
 
 
