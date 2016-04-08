@@ -5,8 +5,29 @@
 
 %% Plant matrices:
 
-A = [0 0; 0 0];
-B = [0; 0];
-C = [0 0];
+A = [-.5 .5; 0 -2];
+B = [0; 2];
+C = [1 0];
 
-%%
+%% Determine the equivalent discrete plant:
+
+
+
+
+%% Determine the feedback gain vector K
+
+
+
+
+
+%% Determine the reference gain Kr:
+
+
+
+
+%% Design the Observer: Determine the Observer gain vector L
+
+
+
+
+
