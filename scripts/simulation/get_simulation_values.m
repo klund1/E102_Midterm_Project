@@ -20,7 +20,10 @@ Bd = dt_sys.b
 
 %% Determine the feedback gain vector K
 
-% Because 
+Q = [100 0; 0 0];
+R = 1;
+
+[K S P_K] = dlqr(Ad, Bd, Q, R);
 
 
 
@@ -35,4 +38,5 @@ P_L = 0.2*P_K;
 L = acker(Ad',C',P_L).'
 
 
-
+Qw = 0;
+Rv = 0;
