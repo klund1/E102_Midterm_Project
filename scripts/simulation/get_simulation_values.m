@@ -20,8 +20,8 @@ Bd = dt_sys.b
 
 %% Determine the feedback gain vector K
 
-Q = [100 0; 0 0];
-R = 1;
+Q = [100 0; 0 5];
+R = 20;
 
 [K S P_K] = dlqr(Ad, Bd, Q, R);
 
