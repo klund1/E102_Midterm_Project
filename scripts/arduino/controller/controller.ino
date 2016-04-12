@@ -8,12 +8,13 @@ float rn = 0;
 float xhat[2] = {0,0};
 float yhat = 0;
 
+// These values are determined from the simulation
 float Ad[2][2] = { {0.9512, 0.0442}, {0.0, 0.8187} };
 float Bd[2]    =   {0.0046, 0.1813};
 float C[2]     =   {1.0, 0};
-float L[2]     =   {1.429, 9.514};
-float Kr       =    2.414;
-float K[2]     =   {1.082, 0.332};
+float L[2]     =   {1.4362, 9.6214};
+float Kr       =    3.2086;
+float K[2]     =   {1.6938, 0.5148};
 
 unsigned long loop_start_time;
 unsigned long loop_time;
@@ -21,22 +22,18 @@ unsigned long start_time;
 unsigned int loopNum = 0; 
 
 void setup(){
-  Serial.begin(115200);
+  Serial.begin(9600);
   loop_time = 1000000/sample_rate;
-  Serial.println(loop_time);
   start_time = micros();
   Serial.println("beginning");
   
-  pinMode(outputPin, OUTPUT);
-  pinMode(inputPin, INPUT);
-  delay(10000);
 }
 
 void loop(){
   loop_start_time = micros();
   
   //input step
-  if (rn == 0 && micros() > start_time+1000000) {
+  if (rn == 0 && micros() > start_time+5000000) {
     rn = 2.5;
   }
   
@@ -45,14 +42,13 @@ void loop(){
   
   //compute the control input and output it to the system
   un = controller(xhat, yhat, yn, un, rn);
-
   analogWrite(outputPin, digitalValue(un));
   
   //print the control input and system output
-  Serial.print(loopNum * 0.1);
-  Serial.print(" ");
+  Serial.print(loopNum * .1);
+  Serial.print("\t");
   Serial.print(un);
-  Serial.print(" ");
+  Serial.print("\t");
   Serial.println(yn);
   
   //wait so that we sample at 10Hz
@@ -86,7 +82,7 @@ int digitalValue(float voltage) {
     return 0;
   }
   else {
-    return 255 * (voltage / 5.0);
+    return 255* (voltage/5.0);
   }
 }
 
