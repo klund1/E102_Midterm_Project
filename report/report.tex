@@ -243,24 +243,24 @@ Kr =
 \end{verbatim}
 Therefore, our reference gain is:
 \[K_r = 2.4140\]
-\section*{Simulation}
+\pagebreak\section*{Simulation}
 To confirm that our design will meet the given specifications, we simulated the step response of the system in Simulink.
 Our Simulink model is included as Figure \ref{fig:simulink}. \\
 
 \begin{figure}[h]
 \centering
-    \begin{subfigure}[b]{0.9\textwidth}
+    \begin{subfigure}[b]{0.8\textwidth}
         \includegraphics[width=0.9\textwidth]{system}
         \caption{The high level Simulink model for our control system}
         \label{fig:system}
     \end{subfigure}
     \\
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.4\textwidth}
         \includegraphics[width=0.9\textwidth]{plant}
         \caption{The Simulink model of our plant}
         \label{fig:plant}
     \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.4\textwidth}
         \includegraphics[width=0.9\textwidth]{observer}
         \caption{The Simulink model of our observer}
         \label{fig:observer}
@@ -274,7 +274,7 @@ The total control input is also relatively low, as desired.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.7\linewidth]{sim_results}
+\includegraphics[width = 0.8\linewidth]{sim_results}
 \caption{The results of our simulation}\label{fig:results}
 \end{figure}
 
