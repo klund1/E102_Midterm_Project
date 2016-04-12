@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{enumitem}
 
 \setlength{\parindent}{0pt}
 
@@ -15,10 +16,18 @@
 \pagebreak
 
 \section*{Introduction}
-
+The goal of this project is to design a control system for a simple circuit to meet design specifications for the step response.
+The design specifications that we were given are:
+\begin{itemize}[noitemsep]
+\item zero overshoot
+\item zero steady state error
+\item minimize the control input while keeping the 2\% settling time under 4s.
+\item the sample rate is 10 Hz
+\end{itemize}
+We will design an observer based controller with full-state feedback to meet these specifications.
 
 \section*{Analysis of the Plant}
-The plant that we are trying to control is the circuit depicted in figure \ref{fig:circuit}.
+The plant that we are trying to control is the circuit depicted in Figure \ref{fig:circuit}.
 This is a simple single input, single output system.
 
 \begin{figure}[h]
