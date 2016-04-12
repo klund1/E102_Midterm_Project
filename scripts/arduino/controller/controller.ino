@@ -32,7 +32,7 @@ void setup(){
 void loop(){
   loop_start_time = micros();
   
-  //input step
+  //input step at 5 seconds
   if (rn == 0 && micros() > start_time+5000000) {
     rn = 2.5;
   }
