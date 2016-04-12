@@ -2,18 +2,18 @@
 #define outputPin A1
 #define sample_rate 10 //sample rate, in Hz
 
-int yn = 0;
-int un = 0;
-int rn = 0;
-int xhat[2] = {0,0};
-int yhat = 0;
+float yn = 0;
+float un = 0;
+float rn = 0;
+float xhat[2] = {0,0};
+float yhat = 0;
 
-int Ad[2][2] = { {0,0}, {0,0} };
-int Bd[2]    =   {0,0};
-int C[2]     =   {0,0};
-int L[2]     =   {0,0};
-int Kr       =    0;
-int K[2]     =   {0,0};
+float Ad[2][2] = { {0.9512, 0.0442}, {0.0, 0.8187} };
+float Bd[2]    =   {0.0046, 0.1813};
+float C[2]     =   {1.0, 0};
+float L[2]     =   {1.429, 9.514};
+float Kr       =    2.414;
+float K[2]     =   {1.082, 0.332};
 
 unsigned long loop_start_time;
 unsigned long loop_time;
@@ -30,15 +30,15 @@ void loop(){
   
   //input step
   if (rn == 0 && micros() > start_time+1000000) {
-    rn = 512;
+    rn = 2.5;
   }
   
   //read the current value from the input
-  yn = analogRead(inputPin);
+  yn = voltage(analogRead(inputPin));
   
   //compute the control input and output it to the system
   un = controller(xhat, yhat, yn, un, rn);
-  analogWrite(outputPin,un);
+  analogWrite(outputPin, digitalValue(un));
   
   //print the control input and system output
   Serial.print(un);
@@ -52,23 +52,31 @@ void loop(){
 
 //This function implements the controller 
 //Observer, full-state feedback gains, and reference gains;
-int controller(int* xhat, int& yhat, int yn, int un, int rn) {
+float controller(float* xhat, float& yhat, float yn, float un, float rn) {
   yhat = C[0]*xhat[0]+C[1]*xhat[1];
-  int new_xhat0 = Ad[0][0]*xhat[0] + Ad[0][1]*xhat[1] + Bd[0]*un + L[0]*(yn-yhat);
-  int new_xhat1 = Ad[1][0]*xhat[1] + Ad[1][1]*xhat[1] + Bd[1]*un + L[0]*(yn-yhat);
+  float new_xhat0 = Ad[0][0]*xhat[0] + Ad[0][1]*xhat[1] + Bd[0]*un + L[0]*(yn-yhat);
+  float new_xhat1 = Ad[1][0]*xhat[1] + Ad[1][1]*xhat[1] + Bd[1]*un + L[0]*(yn-yhat);
   xhat[0] = new_xhat0;
   xhat[1] = new_xhat1;
   
-  return saturate(-K[0]*xhat[0] - K[1]*xhat[1] + Kr*rn);
+  return -K[0]*xhat[0] - K[1]*xhat[1] + Kr*rn;
 }
 
 //This function ensures that the output is in a valid range for analogWrite
-int saturate(int un) {
-  if (un > 1023) {
-    un = 1023;
-  }
-  if (un < 0) {
-    un = 0;
-  }
-  return un;
+float voltage(int digital_value) {
+ return 5.0*digital_value/1023;
 }
+
+int digitalValue(float voltage) {
+  if(voltage > 5.0) {
+    return 1023;
+  }
+  else if (voltage < 0.0) {
+    return 0;
+  }
+  else {
+    return 1023* (voltage/5.0);
+  }
+}
+
+

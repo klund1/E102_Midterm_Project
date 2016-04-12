@@ -24,7 +24,8 @@ Q = [100 0; 0 5];
 R = 20;
 
 [K S P_K] = dlqr(Ad, Bd, Q, R);
-
+K
+P_K
 
 
 %% Determine the reference gain Kr:

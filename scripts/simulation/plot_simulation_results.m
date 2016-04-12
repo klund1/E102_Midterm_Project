@@ -9,6 +9,8 @@
 subplot(1,2,1)
 plot(y.time,y.data)
 grid on
+hold on
+fplot(@(x) 2.5*.98, [0 max(y.time)], 'r--')
 title('System Output vs. Time')
 xlabel('Time (s)')
 ylabel('System Output (V)')
