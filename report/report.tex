@@ -163,40 +163,41 @@ Now that we have a discrete-time state space representation of our plant, we can
 
 To do this, we will use optimal control and minimize the objective function 
 \[
-J = \frac{1}{2}\sum_{n=0}^{\infty}\left(20x_1[n]^2 + x_2[n]^2 +4u[n]^2 \right) 
+J = \frac{1}{2}\sum_{n=0}^{\infty}\left(20x_1[n]^2 + x_2[n]^2 +2u[n]^2 \right) 
 \]
-This is just a standard quadratic optimization of the form $J = \frac{1}{2}\sum\limits_{n=0}^{\infty}\left(\mathbf{x}[n]^T\mathbf{Qx}[n] + \mathbf{u}[n]^T\mathbf{Ru}[n] \right) $ where $\mathbf{Q} = \begin{bmatrix}20 & 0\\0 & 1\end{bmatrix}$ and $\mathbf{R} = 4$. 
+This is just a standard quadratic optimization of the form $J = \frac{1}{2}\sum\limits_{n=0}^{\infty}\left(\mathbf{x}[n]^T\mathbf{Qx}[n] + \mathbf{u}[n]^T\mathbf{Ru}[n] \right) $ where $\mathbf{Q} = \begin{bmatrix}20 & 0\\0 & 1\end{bmatrix}$ and $\mathbf{R} = 2$. 
 We can use the Matlab command {\tt dlqr} to solve this optimization problem as follows:
 \small
 \begin{verbatim}
 >> Ad = dt_sys.a;
 >> Bd = dt_sys.b;
 >> Q = [20 0; 0 1];
->> R = 4;
+>> R = 2;
 >> [K S P_K] = dlqr(Ad,Bd,Q,R)
 
 K =
 
-    1.0821    0.3319
+    1.6938    0.5148
 
 
 S =
 
-  157.3793   22.9251
-   22.9251    7.5598
+    142.8152   18.3179
+    18.3179    6.1006
 
 
 P_K =
 
-    0.8314
-    0.8734
+
+    0.8344 + 0.0308i
+    0.8344 - 0.0308i
 \end{verbatim}\normalsize
 
 From this output, we can see that our feedback gains are:
-\[\mathbf{K} = \begin{bmatrix} 1.0821 & 0.3319\end{bmatrix}\]
+\[\mathbf{K} = \begin{bmatrix} 1.6938 & 0.5148\end{bmatrix}\]
 And our system poles are:
 \begin{align*}
-z_1 &= 0.8314 \\ z_2 &= 0.8734
+z_1 &= 0.8344 + 0.0308i \\ z_2 &= 0.8344 - 0.0308i
 \end{align*}
 
 \subsection*{Observer}
@@ -213,7 +214,7 @@ We need the observer to respond faster than the plant, so that we will be able t
 To do this, we divide the values of the system poles by five to get the pole locations:
 
 \begin{align*}
-z_1 &= 0.1663 \\ z_2 &= 0.1747
+z_1 &= 0.1669 + 0.0062i \\ z_2 &= 0.1669 - 0.0062i
 \end{align*}
 
 Now, we can use Matlab to determine {\bf L}:
@@ -224,15 +225,15 @@ Now, we can use Matlab to determine {\bf L}:
 
 L =
 
-    1.4290
-    9.5143
+    1.4362
+    9.6214
 \end{verbatim}
 
 Therefore, our observer gains are:
 \[\mathbf{L} = 
     \begin{bmatrix}
-       1.4290 \\
-       9.5143
+       1.4362 \\
+       9.6214
     \end{bmatrix}
 \]
 
@@ -248,7 +249,7 @@ We can use Matlab to calculate this for us:
 
 Kr =
 
-    2.4140
+    3.2086
 \end{verbatim}
 Therefore, our reference gain is:
 \[K_r = 2.4140\]

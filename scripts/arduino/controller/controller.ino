@@ -33,7 +33,7 @@ void loop(){
   loop_start_time = micros();
   
   //input step at 5 seconds
-  if (rn == 0 && micros() > start_time+5000000) {
+  if (rn == 0 && micros() > start_time+10000000) {
     rn = 2.5;
   }
   
@@ -45,10 +45,10 @@ void loop(){
   analogWrite(outputPin, digitalValue(un));
   
   //print the control input and system output
-  Serial.print(loopNum * .1);
-  Serial.print("\t");
+  Serial.print(loopNum * 1.0/sample_rate);
+  Serial.print(' ');
   Serial.print(un);
-  Serial.print("\t");
+  Serial.print(' ');
   Serial.println(yn);
   
   //wait so that we sample at 10Hz
@@ -70,7 +70,7 @@ float controller(float* xhat, float& yhat, float yn, float un, float rn) {
 }
 
 //This function ensures that the output is in a valid range for analogWrite
-float voltage(int digital_value) {
+float voltage(unsigned int digital_value) {
  return 5.0*digital_value/1023;
 }
 
