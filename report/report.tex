@@ -2,6 +2,10 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\setlength{\parindent}{0pt}
 
 \title{\vspace{100pt} E102 Midterm Project \vspace{20pt}}
 \author{Kyle Lund, Jesse Joseph, and Josh Sealand}
@@ -91,8 +95,188 @@ x_1 \\ x_2
 \end{bmatrix} u
 \end{equation}
 \section*{Designing the Controller}
+\subsection*{Discrete-Time Representation}
+To design a digital control system, we need the equivalent discrete-time state space representation of the plant.
+Matlab can generate this for us with the command {\tt c2d}.
+The Matlab commands used to do this conversion and their outputs are included below:
+\small
+\begin{verbatim}
+>> A = [-.5 .5; 0 -2]
+>> B = [0; 2]
+>> C = [1 0]
+>> D = 0;
+>> Ts = 0.1;
+>> dt_sys = c2d(ss(A,B,C,D),Ts)
+
+dt_sys =
+ 
+  a = 
+            x1       x2
+   x1   0.9512  0.04417
+   x2        0   0.8187
+ 
+  b = 
+             u1
+   x1  0.004604
+   x2    0.1813
+ 
+  c = 
+       x1  x2
+   y1   1   0
+ 
+  d = 
+       u1
+   y1   0
+ 
+Sample time: 0.1 seconds
+Discrete-time state-space model.
+\end{verbatim}\normalsize
+Using this, our discrete-time plant is:
+\begin{align*}
+\mathbf{x}[n+1] &= 
+  \begin{bmatrix}
+    0.951 & 0.0442\\
+    0     & 0.819
+  \end{bmatrix}
+  \mathbf{x}[n] + 
+  \begin{bmatrix}
+    0.00460 \\ 0.181
+  \end{bmatrix}u[n]\\
+y[n] &= 
+  \begin{bmatrix}
+    1 & 0
+  \end{bmatrix}
+  \mathbf{x}[n]
+\end{align*}
+
+\subsection*{Full State Feedback}
+Now that we have a discrete-time state space representation of our plant, we can design a full state feedback controller \emph{in discrete time} to control our system.
+
+To do this, we will use optimal control and minimize the objective function 
+\[
+J = \frac{1}{2}\sum_{n=0}^{\infty}\left(20x_1[n]^2 + x_2[n]^2 +4u[n]^2 \right) 
+\]
+This is just a standard quadratic optimization of the form $J = \frac{1}{2}\sum\limits_{n=0}^{\infty}\left(\mathbf{x}[n]^T\mathbf{Qx}[n] + \mathbf{u}[n]^T\mathbf{Ru}[n] \right) $ where $\mathbf{Q} = \begin{bmatrix}20 & 0\\0 & 1\end{bmatrix}$ and $\mathbf{R} = 4$. 
+We can use the Matlab command {\tt dlqr} to solve this optimization problem as follows:
+\small
+\begin{verbatim}
+>> Ad = dt_sys.a;
+>> Bd = dt_sys.b;
+>> Q = [20 0; 0 1];
+>> R = 4;
+>> [K S P_K] = dlqr(Ad,Bd,Q,R)
+
+K =
+
+    1.0821    0.3319
 
 
+S =
+
+  157.3793   22.9251
+   22.9251    7.5598
+
+
+P_K =
+
+    0.8314
+    0.8734
+\end{verbatim}\normalsize
+
+From this output, we can see that our feedback gains are:
+\[\mathbf{K} = \begin{bmatrix} 1.0821 & 0.3319\end{bmatrix}\]
+And our system poles are:
+\begin{align*}
+z_1 &= 0.8314 \\ z_2 &= 0.8734
+\end{align*}
+
+\subsection*{Observer}
+In practice, we will not have direct access to the full state of our system.
+Instead, we will need to approximate the state of the system with an observer of the form:
+
+\begin{align*}
+\hat{\mathbf{x}}[n+1] &= \mathbf{A}_d\hat{\mathbf{x}}[n]+ \mathbf{B}_d u[n] + \mathbf{L}(y[n]-\hat{y[n]} )\\
+\hat{y}[n] &= \mathbf{C}\hat{\mathbf{x}}[n]
+\end{align*}
+
+Matlab can design this controller for us (by selecting {\bf L}) if we provide desired poles for the observer.
+We need the observer to respond faster than the plant, so that we will be able to estimate the state of the system in real time.
+To do this, we divide the values of the system poles by five to get the pole locations:
+
+\begin{align*}
+z_1 &= 0.1663 \\ z_2 &= 0.1747
+\end{align*}
+
+Now, we can use Matlab to determine {\bf L}:
+\small
+\begin{verbatim}
+>> P_L = P_K/5;
+>> L = acker(Ad',C',P_L).'
+
+L =
+
+    1.4290
+    9.5143
+\end{verbatim}
+
+Therefore, our observer gains are:
+\[\mathbf{L} = 
+    \begin{bmatrix}
+       1.4290 \\
+       9.5143
+    \end{bmatrix}
+\]
+
+\subsection*{Reference Gain}
+To have a usable system, we also need a reference gain $K_r$ that will be multiplied by the input.
+We have the following formula for that reference gain in order to have zero steady-state error:
+\[K_r = -\mathbf{\left[(C-DK)(A_\mathrm{d}-I-B_\mathrm{d}K)^\mathrm{-1}B_\mathrm{d}+D\right]}^{-1}\]
+We can use Matlab to calculate this for us:
+\small
+\begin{verbatim}
+>> I = eye(2);
+>> Kr = -inv( (C-D*K)*inv(Ad-I-Bd*K)*Bd + D )
+
+Kr =
+
+    2.4140
+\end{verbatim}
+Therefore, our reference gain is:
+\[K_r = 2.4140\]
+\section*{Simulation}
+To confirm that our design will meet the given specifications, we simulated the step response of the system in Simulink.
+Our Simulink model is included as Figure \ref{fig:simulink}. \\
+
+\begin{figure}[h]
+\centering
+    \begin{subfigure}[b]{0.9\textwidth}
+        \includegraphics[width=0.9\textwidth]{system}
+        \caption{The high level Simulink model for our control system}
+        \label{fig:system}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=0.9\textwidth]{plant}
+        \caption{The Simulink model of our plant}
+        \label{fig:plant}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=0.9\textwidth]{observer}
+        \caption{The Simulink model of our observer}
+        \label{fig:observer}
+    \end{subfigure}
+    \caption{Our Simulink model}\label{fig:simulink}
+\end{figure}
+
+The results of the Simulation are summarized in Figure \ref{fig:results}.
+The system meets the given specifications of zero overshoot, zero steady state error, and a 2\% settling time under 4s.
+The total control input is also relatively low, as desired.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.7\linewidth]{sim_results}
+\caption{The results of our simulation}\label{fig:results}
+\end{figure}
 
 \section*{Results}
 

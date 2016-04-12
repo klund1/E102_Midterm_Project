@@ -17,7 +17,7 @@ ylabel('System Output (V)')
 ylim([0,5])
 
 subplot(1,2,2)
-plot(u.time,u.data)
+stairs(u.time,u.data)
 grid on
 title('Control Input vs. Time')
 xlabel('Time (s)')

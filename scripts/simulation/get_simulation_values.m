@@ -13,17 +13,17 @@ C = [1 0]
 
 D = 0;
 Ts = 0.1;
-dt_sys = c2d(ss(A,B,C,D),Ts);
+dt_sys = c2d(ss(A,B,C,D),Ts)
 Ad = dt_sys.a
 Bd = dt_sys.b
 
 
 %% Determine the feedback gain vector K
 
-Q = [100 0; 0 5];
-R = 20;
+Q = [20 0; 0 1];
+R = 4;
 
-[K S P_K] = dlqr(Ad, Bd, Q, R);
+[K S P_K] = dlqr(Ad, Bd, Q, R)
 K
 P_K
 
