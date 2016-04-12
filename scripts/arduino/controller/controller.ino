@@ -21,18 +21,22 @@ unsigned long start_time;
 unsigned int loopNum = 0; 
 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(115200);
   loop_time = 1000000/sample_rate;
+  Serial.println(loop_time);
   start_time = micros();
   Serial.println("beginning");
   
+  pinMode(outputPin, OUTPUT);
+  pinMode(inputPin, INPUT);
+  delay(10000);
 }
 
 void loop(){
   loop_start_time = micros();
   
   //input step
-  if (rn == 0 && micros() > start_time+5000000) {
+  if (rn == 0 && micros() > start_time+1000000) {
     rn = 2.5;
   }
   
@@ -41,13 +45,14 @@ void loop(){
   
   //compute the control input and output it to the system
   un = controller(xhat, yhat, yn, un, rn);
+
   analogWrite(outputPin, digitalValue(un));
   
   //print the control input and system output
-  Serial.print(loopNum * .1);
-  Serial.print("\t");
+  Serial.print(loopNum * 0.1);
+  Serial.print(" ");
   Serial.print(un);
-  Serial.print("\t");
+  Serial.print(" ");
   Serial.println(yn);
   
   //wait so that we sample at 10Hz
@@ -61,11 +66,11 @@ void loop(){
 float controller(float* xhat, float& yhat, float yn, float un, float rn) {
   yhat = C[0]*xhat[0]+C[1]*xhat[1];
   float new_xhat0 = Ad[0][0]*xhat[0] + Ad[0][1]*xhat[1] + Bd[0]*un + L[0]*(yn-yhat);
-  float new_xhat1 = Ad[1][0]*xhat[1] + Ad[1][1]*xhat[1] + Bd[1]*un + L[1]*(yn-yhat);
+  float new_xhat1 = Ad[1][0]*xhat[0] + Ad[1][1]*xhat[1] + Bd[1]*un + L[1]*(yn-yhat);
   xhat[0] = new_xhat0;
   xhat[1] = new_xhat1;
   
-  return -K[0]*2*xhat[0] - K[1]*2*xhat[1] + Kr*rn;
+  return -K[0]*xhat[0] - K[1]*xhat[1] + Kr*rn;
 }
 
 //This function ensures that the output is in a valid range for analogWrite
@@ -81,7 +86,7 @@ int digitalValue(float voltage) {
     return 0;
   }
   else {
-    return 255* (voltage/5.0);
+    return 255 * (voltage / 5.0);
   }
 }
 
