@@ -26,16 +26,12 @@ void setup(){
   loop_time = 1000000/sample_rate;
   start_time = micros();
   Serial.println("beginning");
-  
+  delay(5000);
+  rn = 2.5;
 }
 
 void loop(){
   loop_start_time = micros();
-  
-  //input step at 5 seconds
-  if (rn == 0 && micros() > start_time+10000000) {
-    rn = 2.5;
-  }
   
   //read the current value from the input
   yn = voltage(analogRead(inputPin));
@@ -70,7 +66,7 @@ float controller(float* xhat, float& yhat, float yn, float un, float rn) {
 }
 
 //This function ensures that the output is in a valid range for analogWrite
-float voltage(unsigned int digital_value) {
+float voltage(int digital_value) {
  return 5.0*digital_value/1023;
 }
 
