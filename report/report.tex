@@ -4,7 +4,8 @@
 \usepackage{amsmath}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage{enumitem}
+\usepackage[shortlabels]{enumitem}
+\usepackage{verbatim}
 
 \setlength{\parindent}{0pt}
 
@@ -300,5 +301,14 @@ We found that our controlled system was slightly slower than the simulation, mos
 \includegraphics[width = 0.7\linewidth]{results}
 \caption{The step response of our controlled system}\label{fig:results}
 \end{figure}
+
+\pagebreak
+\section*{Appendix}
+\begin{enumerate}[A.]
+\item The Arduino code used to implement our controller: 
+\footnotesize
+\verbatiminput{../scripts/arduino/controller/controller.ino}
+\normalsize
+\end{enumerate}
 
 \end{document}
