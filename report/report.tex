@@ -166,6 +166,8 @@ To do this, we will use optimal control and minimize the objective function
 J = \frac{1}{2}\sum_{n=0}^{\infty}\left(20x_1[n]^2 + x_2[n]^2 +2u[n]^2 \right) 
 \]
 This is just a standard quadratic optimization of the form $J = \frac{1}{2}\sum\limits_{n=0}^{\infty}\left(\mathbf{x}[n]^T\mathbf{Qx}[n] + \mathbf{u}[n]^T\mathbf{Ru}[n] \right) $ where $\mathbf{Q} = \begin{bmatrix}20 & 0\\0 & 1\end{bmatrix}$ and $\mathbf{R} = 2$. 
+These values were chosen by trial and error in the simulation.
+We found that by using Q = I, the system was much too slow, so we chose to increase the relative weight of Q compared to R, the weight on the control input.
 We can use the Matlab command {\tt dlqr} to solve this optimization problem as follows:
 \small
 \begin{verbatim}
