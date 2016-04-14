@@ -293,6 +293,15 @@ The total control input is also relatively low, as desired.
 
 \section*{Results}
 
+We implemented the system using the given circuit schematic. The circuit is depicted in Figure \ref{fig:system_hardware}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.7\linewidth]{system_hardware}
+\caption{Implementation of the plant being controlled}\label{fig:system_hardware}
+\end{figure}
+
+
 We find that the actual system achieves a 2\% settling time under 4s, as desired.
 Additionally, the system produces no overshoot and has zero steady state error.
 The control input is saturated at the start of the step response as expected, because the error is large.
