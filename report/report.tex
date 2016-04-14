@@ -259,33 +259,33 @@ Our Simulink model is included as Figure \ref{fig:simulink}. \\
 
 \begin{figure}[h]
 \centering
-    \begin{subfigure}[b]{0.8\textwidth}
+    \begin{subfigure}[b]{0.65\textwidth}
         \includegraphics[width=0.9\textwidth]{system}
-        \caption{The high level Simulink model for our control system}
+        \caption{The high level model for our control system}
         \label{fig:system}
     \end{subfigure}
     \\
-    \begin{subfigure}[b]{0.4\textwidth}
+    \begin{subfigure}[b]{0.35\textwidth}
         \includegraphics[width=0.9\textwidth]{plant}
-        \caption{The Simulink model of our plant}
+        \caption{The model of our plant}
         \label{fig:plant}
     \end{subfigure}
-    \begin{subfigure}[b]{0.4\textwidth}
+    \begin{subfigure}[b]{0.35\textwidth}
         \includegraphics[width=0.9\textwidth]{observer}
-        \caption{The Simulink model of our observer}
+        \caption{The model of our observer}
         \label{fig:observer}
     \end{subfigure}
     \caption{Our Simulink model}\label{fig:simulink}
 \end{figure}
 
-The results of the Simulation are summarized in Figure \ref{fig:results}.
+The results of the Simulation are summarized in Figure \ref{fig:sim_results}.
 The system meets the given specifications of zero overshoot, zero steady state error, and a 2\% settling time under 4s.
 The total control input is also relatively low, as desired.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.75\linewidth]{sim_results}
-\caption{The results of our simulation}\label{fig:results}
+\includegraphics[width = 0.95\linewidth]{sim_results}
+\caption{The results of our simulation}\label{fig:sim_results}
 \end{figure}
 
 \section*{Results}
@@ -297,7 +297,7 @@ We found that our controlled system was slightly slower than the simulation, mos
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.8\linewidth]{results}
+\includegraphics[width = 0.7\linewidth]{results}
 \caption{The step response of our controlled system}\label{fig:results}
 \end{figure}
 
